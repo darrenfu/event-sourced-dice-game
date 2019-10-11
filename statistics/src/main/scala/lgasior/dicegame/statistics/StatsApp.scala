@@ -2,17 +2,17 @@ package lgasior.dicegame.statistics
 
 import akka.actor.ActorSystem
 import akka.io.IO
-import akka.stream.actor.ActorSubscriber
 import akka.stream.ActorMaterializer
+import akka.stream.actor.ActorSubscriber
 import akka.stream.scaladsl.{Sink, Source}
-import io.scalac.amqp.{Connection, Queue}
-import lgasior.dicegame.statistics.actor.{SubscriberActor, StatsActor}
+import io.scalac.amqp.{Connection, Message, Queue}
+import lgasior.dicegame.statistics.actor.{StatsActor, SubscriberActor}
 import lgasior.dicegame.statistics.api.StatsApiServiceActor
 import lgasior.dicegame.statistics.config.Config
 import org.slf4j.LoggerFactory
 import spray.can.Http
 
-import scala.util.{Success, Failure}
+import scala.util.{Failure, Success}
 
 object StatsApp {
 
@@ -48,11 +48,10 @@ object StatsApp {
 
     resultFuture onComplete {
       case Success(_) =>
-        //FIXME
-        val subscriber = SubscriberActor.props(statsActor)
+        val subscriber = ActorSubscriber[Message](system.actorOf(SubscriberActor.props(statsActor)))
         Source.fromPublisher(connection.consume(queueName))
           .map(_.message)
-          .to(Sink.fromSubscriber(subscriber))
+          .to(Sink.fromSubscriber[Message](subscriber))
           .run()(ActorMaterializer())
       case Failure(ex) =>
         log.error("Cannot setup queue", ex)

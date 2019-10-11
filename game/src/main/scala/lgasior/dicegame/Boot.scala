@@ -55,7 +55,6 @@ object Boot {
         val publisher = ActorPublisher(system.actorOf(EventPublisherActor.props))
         val subscriber = Sink.fromSubscriber(connection.publish(exchange = exchangeName, ""))
         Source.fromPublisher(publisher)
-//        Source[GameEvent](EventPublisherActor.props)
           .map(toMessage _)
           .to(subscriber)
           .run()(ActorMaterializer())

@@ -41,7 +41,9 @@ lazy val statistics = project.in(file("statistics"))
       "io.spray"          %% "spray-can"        % sprayVersion,
       "io.scalac"         %% "reactive-rabbit"  % reactiveRabbitVersion,
       "org.json4s"        %% "json4s-native"    % json4sVersion,
-      "ch.qos.logback"     % "logback-classic"  % logbackVersion
+      "ch.qos.logback"     % "logback-classic"  % logbackVersion,
+      "org.iq80.leveldb"   % "leveldb"          % "0.7",
+      "org.fusesource.leveldbjni" % "leveldbjni-all" % "1.8"
     ),
     fork := true
   )

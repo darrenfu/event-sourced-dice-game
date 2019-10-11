@@ -17,7 +17,7 @@ class WebsocketEventPublisher(gameId: String, out: ActorRef)
   extends Actor
   with ActorLogging {
 
-  // To replace ImplicitFlowMaterializer
+  // To replace the deprecated ImplicitFlowMaterializer class
   final implicit val materializer = ActorMaterializer(ActorMaterializerSettings(context.system))
 
   lazy val connection = Connection()

@@ -29,10 +29,10 @@ class SubscriberActor(statsActor: ActorRef) extends ActorSubscriber with ActorLo
       } statsActor ! StatsActor.IncRollsCount(rolledNumber.toInt)
     case OnComplete =>
       log.info("Game stream completed, shutting down system")
-      system.shutdown()
+      system.terminate()
     case OnError(cause) =>
       log.error(cause, "Publisher error occurred, shutting down system")
-      system.shutdown()
+      system.terminate()
   }
 
 }
