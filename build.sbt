@@ -21,7 +21,9 @@ lazy val game = project.in(file("game"))
       "io.spray"          %% "spray-can"        % sprayVersion,
       "org.json4s"        %% "json4s-native"    % json4sVersion,
       "org.scalatest"     %% "scalatest"        % "3.0.1" % "test",
-      "ch.qos.logback"     % "logback-classic"  % logbackVersion
+      "ch.qos.logback"     % "logback-classic"  % logbackVersion,
+      "org.iq80.leveldb"   % "leveldb"          % "0.7",
+      "org.fusesource.leveldbjni" % "leveldbjni-all" % "1.8"
     ),
     fork := true
   )
