@@ -24,7 +24,7 @@ class EventSubscriber(publisher: ActorRef) extends ActorSubscriber with ActorLog
         GameEvent(
           gameId = message.headers("gameId"),
           eventType = message.headers("type"),
-          data = Json.parse(message.body.decodeString("UTF-8")))
+          data = Json.parse(new String(message.body.toArray, "UTF-8")))
       publisher ! gameEvent
     case OnComplete =>
       log.info("Game event stream completed")

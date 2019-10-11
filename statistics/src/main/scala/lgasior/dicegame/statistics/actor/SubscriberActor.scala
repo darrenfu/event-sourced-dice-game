@@ -24,7 +24,7 @@ class SubscriberActor(statsActor: ActorRef) extends ActorSubscriber with ActorLo
     case OnNext(message: Message) =>
       for {
         eventType <- message.headers.get("type") if eventType == "DiceRolled"
-        content <- parseOpt(message.body.decodeString("UTF-8"))
+        content <- parseOpt(new String(message.body.toArray, "UTF-8"))
         JInt(rolledNumber) <- content \ "rolledNumber"
       } statsActor ! StatsActor.IncRollsCount(rolledNumber.toInt)
     case OnComplete =>

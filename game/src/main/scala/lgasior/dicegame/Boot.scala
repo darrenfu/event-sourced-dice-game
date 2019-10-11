@@ -1,8 +1,9 @@
 package lgasior.dicegame
 
 import akka.actor.ActorSystem
+import akka.stream.actor.ActorPublisher
 import akka.io.IO
-import akka.stream.ActorFlowMaterializer
+import akka.stream.ActorMaterializer
 import akka.stream.scaladsl.{Sink, Source}
 import akka.util.ByteString
 import com.google.common.net.MediaType
@@ -51,10 +52,13 @@ object Boot {
 
     connection.exchangeDeclare(exchange) onComplete {
       case Success(_) =>
-        Source[GameEvent](EventPublisherActor.props)
-          .map(toMessage)
-          .to(Sink(connection.publish(exchange = exchangeName, "")))
-          .run()(ActorFlowMaterializer())
+        val publisher = ActorPublisher(system.actorOf(EventPublisherActor.props))
+        val subscriber = Sink.fromSubscriber(connection.publish(exchange = exchangeName, ""))
+        Source.fromPublisher(publisher)
+//        Source[GameEvent](EventPublisherActor.props)
+          .map(toMessage _)
+          .to(subscriber)
+          .run()(ActorMaterializer())
       case Failure(ex) =>
         log.error("Cannot create exchange", ex)
         sys.exit(1)

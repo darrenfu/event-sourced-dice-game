@@ -1,28 +1,37 @@
 package controllers
 
 import actors.WebsocketEventPublisher
+import akka.actor.ActorSystem
+import akka.stream.Materializer
+import javax.inject.Inject
 import models.GameEvent
-import play.api.mvc.WebSocket.FrameFormatter
-import play.api.mvc.{WebSocket, Action, Controller}
+import play.api.mvc.WebSocket.MessageFlowTransformer
+import play.api.mvc._
 import play.api.libs.ws._
 import play.api.libs.json._
-import play.api.Play.current
+import play.api.libs.streams.ActorFlow
+
 import scala.concurrent.ExecutionContext.Implicits.global
 
-object MainController extends Controller {
+/**
+  * index template refers to example: https://github.com/webjars/webjars-play/tree/master/test-project
+   */
+class MainController @Inject()(indexTemplate: views.html.index)
+                              (implicit system: ActorSystem, mat: Materializer, ws: WSClient)
+  extends InjectedController {
 
   import config.Config.Game._
 
   implicit val gameEventFormat = Json.format[GameEvent]
 
-  implicit val gameEventFrameFormatter = FrameFormatter.jsonFrame[GameEvent]
+  implicit val gameEventFrameFormatter = MessageFlowTransformer.jsonMessageFlowTransformer[String, GameEvent]
 
-  def index() = Action { request =>
-    Ok(views.html.index())
+  def index = Action {
+    Ok(indexTemplate())
   }
 
   def createGame() = Action.async { request =>
-    WS.url(s"$apiUrl/game")
+    ws.url(s"$apiUrl/game")
       .post("")
       .map {
         case res if res.status == CREATED => Created(res.body)
@@ -45,7 +54,7 @@ object MainController extends Controller {
   }
 
   private def postCommand(url: String, data: JsValue) = {
-    WS.url(s"$apiUrl$url")
+    ws.url(s"$apiUrl$url")
       .post(data)
       .map {
         case res if res.status == ACCEPTED => Accepted
@@ -55,8 +64,10 @@ object MainController extends Controller {
       .recover { case _ => InternalServerError }
   }
 
-  def gameEvents(gameId: String) = WebSocket.acceptWithActor[String, GameEvent] { request => out =>
-    WebsocketEventPublisher.props(gameId, out)
+  def gameEvents(gameId: String) = WebSocket.accept[String, GameEvent] { request =>
+    ActorFlow.actorRef { out =>
+      WebsocketEventPublisher.props(gameId, out)
+    }
   }
 
 }

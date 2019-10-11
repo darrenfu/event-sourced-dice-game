@@ -1,10 +1,11 @@
 package actors
 
 import akka.actor._
-import akka.stream.scaladsl.{ImplicitFlowMaterializer, Sink, Source}
+import akka.stream.{ActorMaterializer, ActorMaterializerSettings}
+import akka.stream.actor.ActorSubscriber
+import akka.stream.scaladsl.{Sink, Source}
 import config.Config
-import global.Global
-import io.scalac.amqp.Queue
+import io.scalac.amqp.{Connection, Message, Queue}
 import models.GameEvent
 
 object WebsocketEventPublisher {
@@ -14,13 +15,16 @@ object WebsocketEventPublisher {
 
 class WebsocketEventPublisher(gameId: String, out: ActorRef)
   extends Actor
-  with ActorLogging
-  with ImplicitFlowMaterializer {
+  with ActorLogging {
+
+  // To replace ImplicitFlowMaterializer
+  final implicit val materializer = ActorMaterializer(ActorMaterializerSettings(context.system))
+
+  lazy val connection = Connection()
 
   import context.dispatcher
 
   override def preStart() = {
-    import Global.connection
     import Config.Events._
 
     val queue = Queue(name = gameId, durable = false, autoDelete = true)
@@ -31,9 +35,11 @@ class WebsocketEventPublisher(gameId: String, out: ActorRef)
     } yield ()
 
     bindFuture.map { _ =>
-      Source(connection.consume(queue.name))
+      val actor = context.system.actorOf(EventSubscriber.props(self))
+      val sink = Sink.fromSubscriber[Message](ActorSubscriber[Message](actor))
+      Source.fromPublisher(connection.consume(queue.name))
         .map(_.message)
-        .to(Sink(EventSubscriber.props(self)))
+        .to(sink)
         .run()
     }.failed.map { ex =>
       log.error(ex, "Cannot bind queue to events from game {}", gameId)

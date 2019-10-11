@@ -1,4 +1,5 @@
-GET     /                               controllers.MainController.index
+# Home page
+GET     /                               controllers.MainController.index()
 
 POST    /game                           controllers.MainController.createGame
 POST    /game/:gameId/start             controllers.MainController.startGame(gameId: String, playersCount: Int)
@@ -6,6 +7,9 @@ POST    /game/:gameId/roll/:playerId    controllers.MainController.roll(gameId: 
 
 GET     /:gameId/events                 controllers.MainController.gameEvents(gameId: String)
 
+# Versioned Assets
+GET     /assets/*file                   controllers.Assets.versioned(path="/public", file)
 
-GET     /assets/*file                   controllers.Assets.at(path="/public", file)
-GET     /webjars/*file                  controllers.WebJarAssets.at(file)
+# WebJars
+#GET     /webjars/*file                  controllers.WebJarAssets.at(file)
+->      /webjars                        webjars.Routes

@@ -2,7 +2,8 @@ package lgasior.dicegame.statistics
 
 import akka.actor.ActorSystem
 import akka.io.IO
-import akka.stream.ActorFlowMaterializer
+import akka.stream.actor.ActorSubscriber
+import akka.stream.ActorMaterializer
 import akka.stream.scaladsl.{Sink, Source}
 import io.scalac.amqp.{Connection, Queue}
 import lgasior.dicegame.statistics.actor.{SubscriberActor, StatsActor}
@@ -47,10 +48,12 @@ object StatsApp {
 
     resultFuture onComplete {
       case Success(_) =>
-        Source(connection.consume(queueName))
+        //FIXME
+        val subscriber = SubscriberActor.props(statsActor)
+        Source.fromPublisher(connection.consume(queueName))
           .map(_.message)
-          .to(Sink(SubscriberActor.props(statsActor)))
-          .run()(ActorFlowMaterializer())
+          .to(Sink.fromSubscriber(subscriber))
+          .run()(ActorMaterializer())
       case Failure(ex) =>
         log.error("Cannot setup queue", ex)
         sys.exit(1)

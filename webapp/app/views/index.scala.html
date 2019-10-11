@@ -1,4 +1,4 @@
-@()
+@this(webJarsUtil: org.webjars.play.WebJarsUtil)
 
 <!DOCTYPE html>
 
@@ -10,8 +10,8 @@
 
     <title>Dice game</title>
 
-    <link rel='stylesheet' href='@routes.WebJarAssets.at(WebJarAssets.locate("css/bootstrap.min.css"))'>
-    <link rel='stylesheet' href='@routes.Assets.at("stylesheets/main.css")'>
+    <link rel='stylesheet' href='@webJarsUtil.locate("css/bootstrap.min.css").css()'>
+    <link rel='stylesheet' href='@webJarsUtil.locate("stylesheets/main.css").css()'>
 </head>
 
 <body>
@@ -102,14 +102,14 @@
 
 </div>
 
-<script src='@routes.WebJarAssets.at(WebJarAssets.locate("jquery.min.js"))' type='text/javascript'></script>
-<script src='@routes.WebJarAssets.at(WebJarAssets.locate("bootstrap.min.js"))' type='text/javascript'></script>
-<script src='@routes.WebJarAssets.at(WebJarAssets.locate("angular.min.js"))' type='text/javascript'></script>
-<script src='@routes.Assets.at("javascripts/app.js")' type='text/javascript'></script>
-<script src='@routes.Assets.at("javascripts/controllers/create_game_controller.js")' type='text/javascript'></script>
-<script src='@routes.Assets.at("javascripts/controllers/start_game_controller.js")' type='text/javascript'></script>
-<script src='@routes.Assets.at("javascripts/controllers/game_controller.js")' type='text/javascript'></script>
-<script src='@routes.Assets.at("javascripts/services/event_service.js")' type='text/javascript'></script>
-<script src='@routes.Assets.at("javascripts/services/command_service.js")' type='text/javascript'></script>
+<script src='@webJarsUtil.locate("jquery.min.js").script()' type='text/javascript'></script>
+<script src='@webJarsUtil.locate("bootstrap.min.js").script()' type='text/javascript'></script>
+<script src='@webJarsUtil.locate("angular.min.js").script()' type='text/javascript'></script>
+<script src='@routes.Assets.versioned("javascripts/app.js")' type='text/javascript'></script>
+<script src='@routes.Assets.versioned("javascripts/controllers/create_game_controller.js")' type='text/javascript'></script>
+<script src='@routes.Assets.versioned("javascripts/controllers/start_game_controller.js")' type='text/javascript'></script>
+<script src='@routes.Assets.versioned("javascripts/controllers/game_controller.js")' type='text/javascript'></script>
+<script src='@routes.Assets.versioned("javascripts/services/event_service.js")' type='text/javascript'></script>
+<script src='@routes.Assets.versioned("javascripts/services/command_service.js")' type='text/javascript'></script>
 </body>
 </html>
