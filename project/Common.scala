@@ -7,10 +7,11 @@ object Common {
     scalacOptions ++= Seq("-unchecked", "-deprecation", "-feature", "-Xfatal-warnings")
   )
 
-  val akkaVersion = "2.4.x"
-  val playVersion = "2.7.3"
+  val akkaVersion = "2.4.20"
+//  val playVersion = "2.7.3"
+  val playVersion = "2.5.18"
   val reactiveRabbitVersion = "1.1.4"
   val sprayVersion = "1.3.1"
-  val json4sVersion = "3.2.x"
+  val json4sVersion = "3.2.11"
   val logbackVersion = "1.1.2"
 }

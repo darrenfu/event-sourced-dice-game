@@ -9,7 +9,6 @@ object EventPublisherActor {
   def props = Props[EventPublisherActor]
 }
 
-// ActorPublisher was deprecated in Akka 2.5
 class EventPublisherActor extends ActorPublisher[GameEvent] {
 
   var eventCache: List[GameEvent] = Nil

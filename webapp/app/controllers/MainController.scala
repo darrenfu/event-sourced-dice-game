@@ -16,9 +16,9 @@ import scala.concurrent.ExecutionContext.Implicits.global
 /**
   * index template refers to example: https://github.com/webjars/webjars-play/tree/master/test-project
    */
-class MainController @Inject()(indexTemplate: views.html.index)
+class MainController @Inject()(webJarAssets: WebJarAssets)
                               (implicit system: ActorSystem, mat: Materializer, ws: WSClient)
-  extends InjectedController {
+  extends Controller {
 
   import config.Config.Game._
 
@@ -27,7 +27,7 @@ class MainController @Inject()(indexTemplate: views.html.index)
   implicit val gameEventFrameFormatter = MessageFlowTransformer.jsonMessageFlowTransformer[String, GameEvent]
 
   def index = Action {
-    Ok(indexTemplate())
+    Ok(views.html.index(webJarAssets))
   }
 
   def createGame() = Action.async { request =>

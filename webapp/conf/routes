@@ -8,8 +8,7 @@ POST    /game/:gameId/roll/:playerId    controllers.MainController.roll(gameId: 
 GET     /:gameId/events                 controllers.MainController.gameEvents(gameId: String)
 
 # Versioned Assets
-GET     /assets/*file                   controllers.Assets.versioned(path="/public", file)
+GET     /assets/*file                   controllers.Assets.versioned(path="/public", file: Asset)
 
 # WebJars
-#GET     /webjars/*file                  controllers.WebJarAssets.at(file)
-->      /webjars                        webjars.Routes
+GET     /webjars/*file                  controllers.WebJarAssets.at(file)

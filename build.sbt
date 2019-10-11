@@ -53,7 +53,7 @@ lazy val webapp = project.in(file("webapp"))
       "com.typesafe.akka" %% "akka-stream"      % akkaVersion,
       "io.scalac"         %% "reactive-rabbit"  % reactiveRabbitVersion,
       "com.typesafe.play" %% "play-ws"          % playVersion,
-      "org.webjars"       %% "webjars-play"     % playVersion,
+      "org.webjars"       %% "webjars-play"     % "2.5.0-4",
       "org.webjars"        % "jquery"           % "2.1.3",
       "org.webjars"        % "angularjs"        % "1.3.11",
       "org.webjars"        % "bootstrap"        % "3.3.2"
